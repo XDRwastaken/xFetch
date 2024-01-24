@@ -58,7 +58,7 @@ async fn main() -> io::Result<()> {
     let shell_thread = spawn(async {
         Command::new("/bin/sh")
             .arg("-c")
-            .arg("echo $SHELL | head -n1 | cut -d '/' -f4")
+            .arg("echo $SHELL | head -n1 | cut -d '/' -f3")
             .output()
             .expect("Can't fetch your shell")
     });
