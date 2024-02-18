@@ -57,7 +57,7 @@ async fn main() -> io::Result<()> {
         match uptime_lib::get() {
             Ok(uptime) => {
                 let raw = uptime.as_secs_f32() as i32;
-                let formatted_uptime = format!("{}d {}h {}m",
+                let formatted_uptime = format!("{}d, {}h, {}m",
                                                 raw / (60 * 60 * 24),
                                                 (raw / (60 * 60)) % 24,
                                                 (raw / 60) % 60);
