@@ -72,7 +72,7 @@ async fn main() -> io::Result<()> {
                 if mins > 0 || hrs > 0 || days > 0 {
                     formatted_uptime.push_str(&format!("{}m", mins));
                 } else {
-                    // try & display some uptime anyway.
+                    // system uptime is less than a minute. display seconds instead.
                     formatted_uptime.push_str(&format!("{}s", raw));
                 }
 
