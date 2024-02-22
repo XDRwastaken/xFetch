@@ -62,7 +62,7 @@ async fn main() -> io::Result<()> {
                                          raw / 60 % 60);
 
                 let mut formatted_uptime = String::new();
-                
+
                 if days > 0 {
                     formatted_uptime.push_str(&format!("{}d, ", days));
                 }
