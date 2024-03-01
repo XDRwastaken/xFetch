@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/XandrCopyrighted/XandrCopyrighted/main/random/xfetch.jpg" align="right" width="300">
+<img src="https://codeberg.org/XDR/.profile/raw/branch/main/random/xfetch.jpg" align="right" width="300">
 
 ### xFetch
 A simple fetch written in Rust.
