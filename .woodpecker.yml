@@ -9,8 +9,9 @@ steps:
       - time ./target/x86_64-unknown-linux-gnu/optimized-build/xfetch
 
   - name: Artifact
-    image: rust:latest
-  - uses: actions/upload-artifact@v3
-    with:
-      name: xFetch
-      path: target/x86_64-unknown-linux-gnu/optimized-build/xfetch
+    image: python:latest
+    commands:
+        - pip install requests
+        - wget https://codeberg.org/JakobDev/ci-scripts/raw/branch/main/release/codeberg-release-upload.py
+        - python ./codeberg-release-upload.py ./target/x86_64-unknown-linux-gnu/optimized-build/xfetch
+    secrets: [CODEBERG_API_TOKEN]
