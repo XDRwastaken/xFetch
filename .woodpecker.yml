@@ -16,4 +16,4 @@ steps:
         - export CODEBERG_REPO=XDR
         - export CODEBERG_API_TOKEN=$XFETCH_TOKEN
         - python ./codeberg-release-upload.py ./target/x86_64-unknown-linux-gnu/optimized-build/xfetch
-    secrets: [XFETCH_TOKEN]
+    secrets: [xfetch_token]
