@@ -7,7 +7,7 @@ A simple fetch written in Rust.
 
 Note: `xFetch` only supports the *[pacman](https://wiki.archlinux.org/title/pacman)* package manager.
 * [Arch User Repository](https://aur.archlinux.org/packages/xfetch-bin)
-* [GitHub Releases](https://github.com/XandrCopyrighted/xFetch/tags)
+* [Codeberg Releases](https://codeberg.org/XDR/xFetch/releases)
 
 ## Build
 ```sh
