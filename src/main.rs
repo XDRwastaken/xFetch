@@ -1,6 +1,5 @@
 #![allow(unused_must_use)]
 use std::{io::{self, Write, BufRead}, fs::File};
-use colored::Colorize;
 use tokio::{task::spawn, join};
 
 pub mod packages;
@@ -8,7 +7,10 @@ pub mod packages;
 macro_rules! writeln_to_handle_if_not_empty {
     ($handle:expr, $entry:expr, $value:expr) => {
         if !$value.is_empty() {
-            writeln!($handle, "   {} ~ {}", $entry.purple(), $value);
+            // let to_write = String::new();
+            // to_write.push_str("38;2;205;0;205    ");
+            // to_write.push_str($entry.purple());
+            writeln!($handle, "\x1B[0;35m   {}\x1B[0m ~ {}", $entry, $value);
         }
     };
 }
@@ -104,10 +106,10 @@ async fn main() -> io::Result<()> {
 
     let mut handle = io::stdout().lock(); // lock stdout for slightly faster writing
     // the actual printing
-    writeln!(handle, "{}{} - {}", "x".red().bold(), "Fetch".cyan(), usr).unwrap();
+    writeln!(handle, "{}{} - {}", "\x1B[0;31m\x1B[1mx", "\x1B[0;36mFetch\x1B[0m", usr).unwrap();
     writeln_to_handle_if_not_empty!(handle, "Shell", shell);
     if pkg != 0 { // odd one out; too lazy to properly implement this lol
-        writeln!(handle, "   {} ~ {}, {}", "PKGs".purple(), pkg, arch).unwrap();
+        writeln!(handle, "   {} ~ {}, {}", "\x1B[0;35mPKGs\x1B[0m", pkg, arch).unwrap();
     } else {
         writeln_to_handle_if_not_empty!(handle, "Arch", arch);
     }
