@@ -4,7 +4,6 @@ version = "3.4.0"
 edition = "2021"
 
 [dependencies]
-tokio = { version = "1.36.0", features = ["macros", "rt-multi-thread"] }
 uptime_lib = "0.3.0"
 
 [profile.release]
@@ -16,9 +15,14 @@ strip = true
 
 [profile.optimized-build]
 inherits = "release"
-opt-level = 'z'
+opt-level = 3
 lto = true
 codegen-units = 1
 panic = "abort"
 strip = true
 
+[profile.profiling]
+inherits = "release"
+debug = true
+strip = false
+opt-level = 0

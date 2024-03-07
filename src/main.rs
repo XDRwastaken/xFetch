@@ -1,15 +1,39 @@
 #![allow(unused_must_use)]
-use std::{io::{self, Write, BufRead}, fs::File};
-use tokio::{task::spawn, join};
+use std::{io::{self, Write, BufRead, BufWriter}, fs::File, thread::spawn};
 
 pub mod packages;
 
 macro_rules! writeln_to_handle_if_not_empty {
     ($handle:expr, $entry:expr, $value:expr) => {
         if !$value.is_empty() {
-            writeln!($handle, "\x1B[0;35m   {}\x1B[0m ~ {}", $entry, $value);
+            if !$value.is_empty() {
+                __writeln_backend($handle, $entry, $value);
+            }
         }
     };
+}
+
+macro_rules! writeln_to_handle_if_not_empty_i16 {
+    ($handle:expr, $entry:expr, $value:expr) => {
+        if $value != 0 {
+            __writeln_backend($handle, $entry, $value.to_string().as_str());
+        }
+    }
+}
+
+#[inline(always)]
+fn __writeln_backend(handle: &mut BufWriter<&mut io::StdoutLock<'_>>, entry: &str, value: &str) {
+    // format! is slow, so do it manually with a String
+    // this code isn't concise but its faster than format! https://stackoverflow.com/questions/63690623/why-is-the-format-macro-slower-than-pushing-into-a-string-directly
+    // this code can be changed back to format! if its faster than the current method if https://github.com/rust-lang/rust/issues/99012 is fixed
+
+    let mut output = String::from("\x1B[0;35m   ");
+    output.push_str(entry);
+    output.push_str("\x1B[0m ~ ");
+    output.push_str(value.to_string().as_str());
+    output.push_str("\n");
+
+    handle.write_all(output.as_bytes());
 }
 
 macro_rules! get_env_var {
@@ -18,13 +42,13 @@ macro_rules! get_env_var {
     };
 }
 
-#[tokio::main]
-async fn main() -> io::Result<()> {
-    let name_thread = spawn(async {
+fn main() -> io::Result<()> {
+    // std::thread::sleep(std::time::Duration::from_millis(200));
+    let name_thread = spawn(|| {
         get_env_var!("USER")
     });
 
-    let distro_thread = spawn(async {
+    let distro_thread = spawn(|| {
         let file = File::open("/etc/os-release").expect("Can't open /etc/os-release!");
         let mut reader = io::BufReader::new(file);
         let (mut line, mut pretty_name) = (String::new(), String::new());
@@ -40,19 +64,19 @@ async fn main() -> io::Result<()> {
         pretty_name
     });
 
-    let desktop_thread = spawn(async {
+    let desktop_thread = spawn(|| {
         get_env_var!("XDG_SESSION_DESKTOP")
     });
 
-    let shell_thread = spawn(async {
+    let shell_thread = spawn(|| {
         get_env_var!("SHELL")
     });
 
-    let packages_thread = spawn(async {
+    let packages_thread = spawn(|| {
         packages::get_num_packages()
     });
 
-    let uptime_thread = spawn(async {
+    let uptime_thread = spawn(|| {
         match uptime_lib::get() {
             Ok(uptime) => {
                 let raw = uptime.as_secs();
@@ -81,39 +105,27 @@ async fn main() -> io::Result<()> {
         }
     });
 
-    // join! to await all `futures` types concurrently
-    let (usr, distro, shell, desktop, pkg, uptime) = join!(
-        name_thread,
-        distro_thread,
-        shell_thread,
-        desktop_thread,
-        packages_thread,
-        uptime_thread
-    );
-
-    // and then .unwrap the results. pray that none of them contain an `Err` type & panic! the app
-    // that'd be bad lol
-    let usr = usr.unwrap();
-    let distro = distro.unwrap();
-    let shell = shell.unwrap();
-    let desktop = desktop.unwrap();
-    let pkg = pkg.unwrap();
-    let uptime = uptime.unwrap();
+    let usr = name_thread.join().unwrap();
+    let distro = distro_thread.join().unwrap();
+    let shell = shell_thread.join().unwrap();
+    let desktop = desktop_thread.join().unwrap();
+    let pkg = packages_thread.join().unwrap();
+    let uptime = uptime_thread.join().unwrap();
     let arch = std::env::consts::ARCH;
 
     let mut handle = io::stdout().lock(); // lock stdout for slightly faster writing
+    let mut writer = BufWriter::new(&mut handle); // buffer it for even faster writing
     // the actual printing
-    writeln!(handle, "{}{} - {}", "\x1B[0;31m\x1B[1mx", "\x1B[0;36mFetch\x1B[0m", usr).unwrap();
-    writeln_to_handle_if_not_empty!(handle, "Shell", shell);
-    if pkg != 0 { // odd one out; too lazy to properly implement this lol
-        writeln!(handle, "   {} ~ {}, {}", "\x1B[0;35mPKGs\x1B[0m", pkg, arch).unwrap();
-    } else {
-        writeln_to_handle_if_not_empty!(handle, "Arch", arch);
-    }
-    writeln_to_handle_if_not_empty!(handle, "Uptime", uptime);
-    writeln_to_handle_if_not_empty!(handle, "Distro", distro);
-    writeln_to_handle_if_not_empty!(handle, "Desktop", desktop);
+    writeln!(writer, "{}{} - {}", "\x1B[0;31m\x1B[1mx", "\x1B[0;36mFetch\x1B[0m", usr).unwrap();
+    writeln_to_handle_if_not_empty!(&mut writer, "Shell", &shell);
+    writeln_to_handle_if_not_empty_i16!(&mut writer, "PKGs", pkg as i16);
+    writeln_to_handle_if_not_empty!(&mut writer, "Arch", &arch);
+    writeln_to_handle_if_not_empty!(&mut writer, "Uptime", &uptime);
+    writeln_to_handle_if_not_empty!(&mut writer, "Distro", &distro);
+    writeln_to_handle_if_not_empty!(&mut writer, "Desktop", &desktop);
 
-    drop(handle);
+    // handle.flush();
+    // drop(handle);
+    // std::thread::sleep(std::time::Duration::from_millis(1200));
     Ok(())
 }
