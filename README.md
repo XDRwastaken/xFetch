@@ -2,17 +2,11 @@
 
 ### xFetch
 
-World's fastest & most simplistic fetch.
+World's simplistic _yet fastest_ fetch.
 
-![concurrency fearless](./docs/concurrency-fearless.svg)
+![Rust Badge](https://img.shields.io/badge/made%20with%20rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)
 
-![binary size is miniscule](./docs/binary-size-miniscule.svg)
-
-![simplicity by nature](./docs/simplicity-by-nature.svg)
-
-[![forthebadge](https://forthebadge.com/images/badges/made-with-rust.svg)](https://forthebadge.com)
-
-![fastest fetch its true](./docs/world's-fastest-fetch-it's-true!.svg)
+![Arch Badge](https://img.shields.io/badge/Only%20For%20Arch%20Linux-1793D1?logo=arch-linux&logoColor=fff&style=for-the-badge)
 
 ---
 
