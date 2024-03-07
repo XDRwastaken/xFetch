@@ -2,15 +2,11 @@
 
 ### xFetch
 
-World's simplistic _yet fastest_ fetch.
+World's _fastest_ and simplest fetch.
 
 ![Rust Badge](https://img.shields.io/badge/made%20with%20rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)
 
 ![Arch Badge](https://img.shields.io/badge/Only%20For%20Arch%20Linux-1793D1?logo=arch-linux&logoColor=fff&style=for-the-badge)
-
----
-
-Note: `xFetch` won't show package counts for any distros that *don't* utilize *[pacman](https://wiki.archlinux.org/title/pacman)* as the package manager.
 
 ## Installation
 
@@ -23,14 +19,14 @@ yay -S xfetch-bin # for those using yay as their AUR helper
 paru -S xfetch-bin # for those using paru as their AUR helper
 ```
 
-### Other distros
+### From source
 
 You can [build](#build) it from source, or download an [artifact](https://github.com/XandrCopyrighted/xFetch/actions/workflows/rust.yml) from the latest run.
 
 ## Build
 
 ```sh
-git clone https://github.com/XandrCopyrighted/xFetch.git
+git clone https://codeberg.org/XDR/xFetch.git
 cd xFetch
 rustup override set nightly
 rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
