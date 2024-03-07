@@ -7,9 +7,6 @@ pub mod packages;
 macro_rules! writeln_to_handle_if_not_empty {
     ($handle:expr, $entry:expr, $value:expr) => {
         if !$value.is_empty() {
-            // let to_write = String::new();
-            // to_write.push_str("38;2;205;0;205    ");
-            // to_write.push_str($entry.purple());
             writeln!($handle, "\x1B[0;35m   {}\x1B[0m ~ {}", $entry, $value);
         }
     };
