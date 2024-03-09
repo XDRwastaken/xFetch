@@ -49,12 +49,9 @@ fn main() -> io::Result<()> {
     });
 
     let header_thread = spawn(|| {
-        let username_thread = spawn(|| { // get the username first, while the real thread generates the String
-            get_env_var!("USER")
-        });
+        let usr = get_env_var!("USER");
         let mut result = String::from("\x1B[0;31m\x1B[1mx\x1B[0;36mFetch\x1B[0m - ");
 
-        let usr = username_thread.join().unwrap();
         result.push_str(&usr);
         result.push_str("\n");
 
