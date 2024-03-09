@@ -43,6 +43,11 @@ macro_rules! get_env_var {
 }
 
 fn main() -> io::Result<()> {
+    // this code is all intentional: we are starting the tasks that tend to be the slowest first
+    let packages_thread = spawn(|| {
+        packages::get_num_packages()
+    });
+
     let header_thread = spawn(|| {
         let username_thread = spawn(|| { // get the username first, while the real thread generates the String
             get_env_var!("USER")
@@ -70,18 +75,6 @@ fn main() -> io::Result<()> {
             line.clear();
         }
         pretty_name
-    });
-
-    let desktop_thread = spawn(|| {
-        get_env_var!("XDG_SESSION_DESKTOP")
-    });
-
-    let shell_thread = spawn(|| {
-        get_env_var!("SHELL")
-    });
-
-    let packages_thread = spawn(|| {
-        packages::get_num_packages()
     });
 
     let uptime_thread = spawn(|| {
@@ -113,21 +106,29 @@ fn main() -> io::Result<()> {
         }
     });
 
-    let header = header_thread.join().unwrap();
-    let distro = distro_thread.join().unwrap();
+    let desktop_thread = spawn(|| {
+        get_env_var!("XDG_SESSION_DESKTOP")
+    });
+
+    let shell_thread = spawn(|| {
+        get_env_var!("SHELL")
+    });
+
+    // this code is all intentional: we are collecting the tasks that tend to be the slowest last
+    let arch = std::env::consts::ARCH;
     let shell = shell_thread.join().unwrap();
     let desktop = desktop_thread.join().unwrap();
-    let pkg = packages_thread.join().unwrap();
     let uptime = uptime_thread.join().unwrap();
-    let arch = std::env::consts::ARCH;
+    let distro = distro_thread.join().unwrap();
+    let header = header_thread.join().unwrap();
+    let pkg = packages_thread.join().unwrap();
 
     let mut handle = io::stdout().lock(); // lock stdout for slightly faster writing
     let mut writer = BufWriter::new(&mut handle); // buffer it for even faster writing
     // the actual printing
-    // writeln!(writer, "{}{} - {}", "\x1B[0;31m\x1B[1mx", "\x1B[0;36mFetch\x1B[0m", usr).unwrap();
     writer.write_all(header.as_bytes());
     writeln_to_handle_if_not_empty!(&mut writer, "Shell", &shell);
-    writeln_to_handle_if_not_empty_i16!(&mut writer, "PKGs", pkg as i16);
+    writeln_to_handle_if_not_empty_i16!(&mut writer, "PKGs", pkg);
     writeln_to_handle_if_not_empty!(&mut writer, "Arch", &arch);
     writeln_to_handle_if_not_empty!(&mut writer, "Uptime", &uptime);
     writeln_to_handle_if_not_empty!(&mut writer, "Distro", &distro);
