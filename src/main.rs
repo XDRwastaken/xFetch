@@ -31,7 +31,7 @@ fn __writeln_backend(handle: &mut BufWriter<&mut io::StdoutLock<'_>>, entry: &st
     output.push_str(entry);
     output.push_str("\x1B[0m ~ ");
     output.push_str(value.to_string().as_str());
-    output.push_str("\n");
+    output.push('\n');
 
     handle.write_all(output.as_bytes());
 }
@@ -53,7 +53,7 @@ fn main() -> io::Result<()> {
         let mut result = String::from("\x1B[0;31m\x1B[1mx\x1B[0;36mFetch\x1B[0m - ");
 
         result.push_str(&usr);
-        result.push_str("\n");
+        result.push('\n');
 
         result
     });
@@ -65,7 +65,7 @@ fn main() -> io::Result<()> {
 
         while reader.read_line(&mut line).expect("Failed to read line") > 0 {
             if line.starts_with("PRETTY_NAME=") {
-                pretty_name = line.splitn(2, '=').nth(1).unwrap().to_string();
+                pretty_name = line.splitn(2, '=').nth(1).unwrap().to_string(); // if clippy tells you to change this code, probably don't, since this is faster in my tests.
                 pretty_name = pretty_name.trim().trim_matches('"').to_string();
                 break;
             }
