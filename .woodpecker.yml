@@ -3,7 +3,7 @@ steps:
     image: rust:latest
     environment: [CARGO_TERM_COLOR=always]
     commands:
-      - rustup default stable
+      - rustup default nightly
       - apt-get update
       - RUSTFLAGS="-Zlocation-detail=none -Zthreads=8" cargo build --target x86_64-unknown-linux-gnu --profile optimized-build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
       - time ./target/x86_64-unknown-linux-gnu/optimized-build/xfetch
