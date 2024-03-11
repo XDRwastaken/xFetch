@@ -12,5 +12,6 @@ steps:
   - name: Check
     image: ubuntu:latest
     commands:
-      - bash
-      - time ./target/x86_64-unknown-linux-gnu/optimized-build/xfetch
+      - cd target/x86_64-unknown-linux-gnu/optimized-build
+      - chmod +x xfetch
+      - time xfetch
