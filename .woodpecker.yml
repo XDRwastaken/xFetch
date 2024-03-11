@@ -14,4 +14,4 @@ steps:
     commands:
       - cd target/x86_64-unknown-linux-gnu/optimized-build
       - chmod +x xfetch
-      - time xfetch
+      - /bin/bash -c "time xfetch"
