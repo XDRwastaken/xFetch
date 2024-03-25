@@ -1,6 +1,9 @@
 #![allow(unused_must_use)]
+//#![deny(unsafe_code)]
+
 use std::{io::{self, Write, BufRead}, fs::File};
 use tokio::{task::spawn, join};
+use sysinfo_dot_h::try_collect;
 
 pub mod packages;
 
@@ -8,6 +11,14 @@ macro_rules! writeln_to_handle_if_not_empty {
     ($handle:expr, $entry:expr, $value:expr) => {
         if !$value.is_empty() {
             writeln!($handle, "\x1B[0;35m   {}\x1B[0m ~ {}", $entry, $value);
+        }
+    };
+}
+
+macro_rules! writeln_to_handle_if_not_empty_i16 {
+    ($handle:expr, $entry:expr, $value:expr) => {
+        if $value.parse::<i16>().unwrap() != 0 {
+            writeln!($handle, "\x1B[0;35m   {}\x1B[0m ~ {}", $entry, $value).unwrap();
         }
     };
 }
@@ -53,33 +64,16 @@ async fn main() -> io::Result<()> {
     });
 
     let uptime_thread = spawn(async {
-        match uptime_lib::get() {
-            Ok(uptime) => {
-                let raw = uptime.as_secs();
-                let (days, hrs, mins) = (raw / (60 * 60 * 24),
-                                         raw/ (60 * 60) % 24,
-                                         raw / 60 % 60);
-
-                let mut formatted_uptime = String::new();
-
-                if days > 0 {
-                    formatted_uptime.push_str(&format!("{}d, ", days));
-                }
-                if hrs > 0 || days > 0 {
-                    formatted_uptime.push_str(&format!("{}h, ", hrs));
-                }
-                if mins > 0 || hrs > 0 || days > 0 {
-                    formatted_uptime.push_str(&format!("{}m", mins));
-                } else {
-                    // system uptime is less than a minute. display seconds instead.
-                    formatted_uptime.push_str(&format!("{}s", raw));
-                }
-
-                formatted_uptime
-            }
-            Err(_) => String::new(),
-        }
+        let info = try_collect().unwrap();
+        
+    let (days, hrs, mins) = (info.uptime as f64 / (60.0 * 60.0 * 24.0),
+                             (info.uptime as f64 / (60.0 * 60.0)) % 24.0,
+                             (info.uptime as f64 / 60.0) % 60.0);
+    
+        let formatted_uptime = format!("{}d, {}h, {}m", days, hrs, mins);
+        formatted_uptime
     });
+      
 
     // join! to await all `futures` types concurrently
     let (usr, distro, shell, desktop, pkg, uptime) = join!(
@@ -110,7 +104,7 @@ async fn main() -> io::Result<()> {
     } else {
         writeln_to_handle_if_not_empty!(handle, "Arch", arch);
     }
-    writeln_to_handle_if_not_empty!(handle, "Uptime", uptime);
+    writeln_to_handle_if_not_empty_i16!(handle, "Uptime", uptime);
     writeln_to_handle_if_not_empty!(handle, "Distro", distro);
     writeln_to_handle_if_not_empty!(handle, "Desktop", desktop);
 

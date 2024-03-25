@@ -1,17 +1,16 @@
 steps:
   - name: Build
     image: rust:latest
-    environment: [CARGO_TERM_COLOR=always]
     commands:
       - rustup default nightly
       - rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
       - apt-get update
       - apt-get install -y time
-      - RUSTFLAGS="-Zlocation-detail=none -Zthreads=8" cargo build --target x86_64-unknown-linux-gnu --profile optimized-build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
+      - RUSTFLAGS="-Zlocation-detail=none -Zthreads=8" cargo build --target x86_64-unknown-linux-gnu --profile release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
 
   - name: Check
     image: ubuntu:latest
     commands:
-      - cd target/x86_64-unknown-linux-gnu/optimized-build
+      - cd target/x86_64-unknown-linux-gnu/release
       - chmod +x xfetch
       - /bin/bash -c "time ./xfetch"

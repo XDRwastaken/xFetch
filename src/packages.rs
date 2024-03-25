@@ -8,4 +8,3 @@ pub fn get_num_packages() -> i16 {
         Err(_) => return 0
     }
 }
-
