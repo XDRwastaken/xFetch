@@ -1,5 +1,5 @@
 #![allow(unused_must_use)]
-//#![deny(unsafe_code)]
+#![allow(unsafe_code)]
 
 use std::{io::{self, Write, BufRead}, fs::File};
 use tokio::{task::spawn, join};
@@ -11,14 +11,6 @@ macro_rules! writeln_to_handle_if_not_empty {
     ($handle:expr, $entry:expr, $value:expr) => {
         if !$value.is_empty() {
             writeln!($handle, "\x1B[0;35m   {}\x1B[0m ~ {}", $entry, $value);
-        }
-    };
-}
-
-macro_rules! writeln_to_handle_if_not_empty_i16 {
-    ($handle:expr, $entry:expr, $value:expr) => {
-        if $value.parse::<i16>().unwrap() != 0 {
-            writeln!($handle, "\x1B[0;35m   {}\x1B[0m ~ {}", $entry, $value).unwrap();
         }
     };
 }
@@ -65,16 +57,30 @@ async fn main() -> io::Result<()> {
 
     let uptime_thread = spawn(async {
         let info = try_collect().unwrap();
-        
-    let (days, hrs, mins) = (info.uptime as f64 / (60.0 * 60.0 * 24.0),
-                             (info.uptime as f64 / (60.0 * 60.0)) % 24.0,
-                             (info.uptime as f64 / 60.0) % 60.0);
-    
-        let formatted_uptime = format!("{}d, {}h, {}m", days, hrs, mins);
+        let uptime = info.uptime;
+        let (days, hrs, mins) = (uptime / (60 * 60 * 24),
+                                 (uptime / (60 * 60)) % 24,
+                                 (uptime / 60) % 60);
+        let mut formatted_uptime = String::new();
+        if days > 0 {
+            formatted_uptime.push_str(&days.to_string());
+            formatted_uptime.push_str("d, ");
+        }
+        if hrs > 0 || days > 0 {
+            formatted_uptime.push_str(&hrs.to_string());
+            formatted_uptime.push_str("h, ");
+        }
+        if mins > 0 || hrs > 0 || days > 0 {
+            formatted_uptime.push_str(&mins.to_string());
+            formatted_uptime.push('m');
+        } else {
+            formatted_uptime.push_str(&uptime.to_string());
+            formatted_uptime.push('s');
+        }
+
         formatted_uptime
     });
       
-
     // join! to await all `futures` types concurrently
     let (usr, distro, shell, desktop, pkg, uptime) = join!(
         name_thread,
@@ -104,7 +110,7 @@ async fn main() -> io::Result<()> {
     } else {
         writeln_to_handle_if_not_empty!(handle, "Arch", arch);
     }
-    writeln_to_handle_if_not_empty_i16!(handle, "Uptime", uptime);
+    writeln_to_handle_if_not_empty!(handle, "Uptime", uptime);
     writeln_to_handle_if_not_empty!(handle, "Distro", distro);
     writeln_to_handle_if_not_empty!(handle, "Desktop", desktop);
 
