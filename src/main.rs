@@ -1,5 +1,4 @@
 #![allow(unused_must_use)]
-#![allow(unsafe_code)]
 
 use std::{io::{self, Write, BufRead}, fs::File};
 use tokio::{task::spawn, join};
