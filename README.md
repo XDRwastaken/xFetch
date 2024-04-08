@@ -13,7 +13,7 @@ World's _fastest_ and simplest fetch.
 
 ```sh
 yay -S xfetch-bin # For those utilizing yay as their AUR helper.
-paru -S xfetch-bin # For those utilizing yay as their AUR helper.
+paru -S xfetch-bin # For those utilizing paru as their AUR helper.
 ```
 
 ### Build
