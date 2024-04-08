@@ -1,4 +1,4 @@
-<img src="https://codeberg.org/XDR/.profile/raw/branch/main/random/xfetch.jpg" align="right" width="300">
+<img src="https://gitlab.com/XDRwastaken/img/-/raw/main/xFetch.jpg" align="right" width="300">
 
 ### xFetch
 
@@ -6,26 +6,20 @@ World's _fastest_ and simplest fetch.
 
 ![Rust Badge](https://img.shields.io/badge/made%20with%20rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)
 ![Arch Badge](https://img.shields.io/badge/Only%20For%20Arch%20Linux-1793D1?logo=arch-linux&logoColor=fff&style=for-the-badge)
-![Binary Badge](https://img.shields.io/badge/Binary_Size-Miniscule_(70%20kb)-7ED321?logo=hack-the-box&logoColor=fff&style=for-the-badge)
+![Binary Badge](https://img.shields.io/badge/Binary_Size-Miniscule_(100%20kb)-7ED321?logo=hack-the-box&logoColor=fff&style=for-the-badge)
 ![Concurrency Badge](https://img.shields.io/badge/Concurrency-fearless-31C4f3?logo=amazon-ec2&logoColor=fff&style=for-the-badge)
 
-## Arch Linux
-
-[AUR link](https://aur.archlinux.org/packages/xfetch-bin)
+## Arch User Repository
 
 ```sh
-yay -S xfetch-bin # for those using yay as their AUR helper
-paru -S xfetch-bin # for those using paru as their AUR helper
+yay -S xfetch-bin # For those utilizing yay as their AUR helper.
+paru -S xfetch-bin # For those utilizing yay as their AUR helper.
 ```
-
-## From source
-
-You can [build](#build) it from source, or download an [artifact](https://github.com/XandrCopyrighted/xFetch/actions/workflows/rust.yml) from the latest run.
 
 ### Build
 
 ```sh
-git clone https://codeberg.org/XDR/xFetch.git
+git clone https://gitlab.com/XDRwastaken/xFetch.git
 cd xFetch
 rustup override set nightly
 rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
