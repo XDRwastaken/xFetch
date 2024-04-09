@@ -1,6 +1,9 @@
 stages:
   - pipeline
 
+variables:
+  CARGO_TERM_COLOR: always
+
 build:
   stage: pipeline
   image: archlinux:base-devel
@@ -9,7 +12,7 @@ build:
     - rustup toolchain install nightly --profile minimal
     - rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
     - RUSTFLAGS="-Zlocation-detail=none -Zthreads=8" cargo build --target x86_64-unknown-linux-gnu --profile release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
-    - time ./target/x86_64-unknown-linux-gnu/release/xf
+    - time ./target/x86_64-unknown-linux-gnu/release/xfetch
     - tar -czf xfetch.tar.gz target/x86_64-unknown-linux-gnu/release/xfetch
   artifacts:
     paths:
