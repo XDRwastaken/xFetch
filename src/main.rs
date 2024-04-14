@@ -1,4 +1,5 @@
 #![allow(unused_must_use)]
+#![deny(unsafe_code)] // Trust, 100% safe
 
 use std::{io::{self, Write, BufRead}, fs::File};
 use tokio::{task::spawn, join};
@@ -47,7 +48,16 @@ async fn main() -> io::Result<()> {
     });
 
     let shell_thread = spawn(async {
-        get_env_var!("SHELL")
+        let shell_path = get_env_var!("SHELL");
+    
+        let shell = if shell_path.starts_with("/usr/bin/") {
+            shell_path.strip_prefix("/usr/bin/").unwrap_or(&shell_path).to_string()
+        } else if shell_path.starts_with("/bin/") {
+            shell_path.strip_prefix("/bin/").unwrap_or(&shell_path).to_string()
+        } else {
+            shell_path
+        };
+        shell
     });
 
     let packages_thread = spawn(async {
@@ -98,17 +108,12 @@ async fn main() -> io::Result<()> {
     let desktop = desktop.unwrap();
     let pkg = pkg.unwrap();
     let uptime = uptime.unwrap();
-    let arch = std::env::consts::ARCH;
 
     let mut handle = io::stdout().lock(); // lock stdout for slightly faster writing
     // the actual printing
     writeln!(handle, "{}{} - {}", "\x1B[0;31m\x1B[1mx", "\x1B[0;36mFetch\x1B[0m", usr).unwrap();
     writeln_to_handle_if_not_empty!(handle, "Shell", shell);
-    if pkg != 0 { // odd one out; too lazy to properly implement this lol
-        writeln!(handle, "   {} ~ {}, {}", "\x1B[0;35mPKGs\x1B[0m", pkg, arch).unwrap();
-    } else {
-        writeln_to_handle_if_not_empty!(handle, "Arch", arch);
-    }
+    writeln!(handle, "   {} ~ {}", "\x1B[0;35mPKGs\x1B[0m", pkg).unwrap();
     writeln_to_handle_if_not_empty!(handle, "Uptime", uptime);
     writeln_to_handle_if_not_empty!(handle, "Distro", distro);
     writeln_to_handle_if_not_empty!(handle, "Desktop", desktop);
