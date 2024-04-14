@@ -4,6 +4,9 @@
 
 World's _fastest_ and simplest fetch.
 
+![Last Commit](https://img.shields.io/gitlab/last-commit/XDRwastaken%2FxFetch?gitlab_url=https%3A%2F%2Fgitlab.com%2F&ref=main&style=for-the-badge&logo=git&logoColor=white)
+
+
 ## Arch User Repository
 
 ```sh
