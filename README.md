@@ -4,11 +4,6 @@
 
 World's _fastest_ and simplest fetch.
 
-![Rust Badge](https://img.shields.io/badge/made%20with%20rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)
-![Arch Badge](https://img.shields.io/badge/Only%20For%20Arch%20Linux-1793D1?logo=arch-linux&logoColor=fff&style=for-the-badge)
-![Binary Badge](https://img.shields.io/badge/Binary_Size-Miniscule_(100%20kb)-7ED321?logo=hack-the-box&logoColor=fff&style=for-the-badge)
-![Concurrency Badge](https://img.shields.io/badge/Concurrency-fearless-31C4f3?logo=amazon-ec2&logoColor=fff&style=for-the-badge)
-
 ## Arch User Repository
 
 ```sh
