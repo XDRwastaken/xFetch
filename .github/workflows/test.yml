@@ -1,0 +1,65 @@
+name: xFetch time
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Rust
+        uses: actions/setup-rust@v1
+        with:
+          rust-version: stable
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+
+      - name: Build with Cargo
+        run: |
+          RUSTFLAGS="-Zlocation-detail=none -Zthreads=8" cargo build --target x86_64-unknown-linux-gnu --profile optimized-build -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
+
+      - name: Run the built binary
+        run: |
+          time ./target/x86_64-unknown-linux-gnu/optimized-build/xfetch
+
+
+name: xFetch time
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+          profile: minimal
+          toolchain: nightly
+          override: true
+          components: rust-src
+    - name: Build xFetch
+      run: RUSTFLAGS="-Zlocation-detail=none -Zthreads=8" cargo build --target x86_64-unknown-linux-gnu --profile release -Z build-std=std,panic_abort -Z build-std-features=panic_immediate_abort
+    - name: Time xFetch
+      run: time ./target/x86_64-unknown-linux-gnu/release/xfetch
+    - name: ‎Artifact‎ xFetch
+      uses: actions/upload-artifact@v4
+      with:
+          name: xfetch
+          path: target/x86_64-unknown-linux-gnu/release/xfetch
