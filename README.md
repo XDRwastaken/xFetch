@@ -2,7 +2,7 @@
 
 ### xFetch
 
-World's _fastest_ and simplest fetch.
+World's _fastest_* and simplest fetch.
 
 ![Last Commit](https://img.shields.io/github/last-commit/XandrCopyrighted%2FxFetch?github_url=https%3A%2F%2Fgithub.com%2F&ref=main&style=for-the-badge&logo=git&logoColor=white)
 ![Made with Rust](https://img.shields.io/badge/made%20with%20rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)
@@ -21,7 +21,7 @@ paru -S xfetch-bin # For those utilizing paru as their AUR helper.
 ### Build
 
 ```sh
-git clone https://gitlab.com/XDRwastaken/xFetch.git
+git clone https://github.com/XDRwastaken/xFetch.git
 cd xFetch
 rustup override set nightly
 rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
